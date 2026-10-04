@@ -1,0 +1,152 @@
+name: Release (Windows + macOS)
+
+# The "button": GitHub -> Actions -> "Release (Windows + macOS)" -> Run workflow.
+# Nothing else to run anywhere. It bumps the version, builds ASBDataGhana.exe
+# and ASBDataGhana.dmg, and publishes them as the newest release.
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: Version bump
+        type: choice
+        options: [patch, minor, major]
+        default: patch
+      version:
+        description: Exact version instead (optional, e.g. 1.4.0)
+        required: false
+        default: ''
+      notes:
+        description: Release notes
+        required: false
+        default: Improvements and bug fixes.
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.bump.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Bump version
+        id: bump
+        run: node scripts/bump-version.mjs "${{ inputs.bump }}" "${{ inputs.version }}"
+
+      - name: Commit, tag and open a pre-release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NOTES: ${{ inputs.notes }}
+        run: |
+          VERSION="${{ steps.bump.outputs.version }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "chore(release): v$VERSION"
+          git tag "v$VERSION"
+          git push origin "HEAD:${{ github.ref_name }}" --follow-tags
+          # Pre-release = hidden from "latest" until every build has finished.
+          gh release create "v$VERSION" --title "ASBData Ghana v$VERSION" --notes "$NOTES" --prerelease --verify-tag
+
+  build:
+    needs: prepare
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - os: windows-latest
+            rust_targets: ''
+            args: --bundles nsis
+          - os: macos-latest
+            rust_targets: aarch64-apple-darwin,x86_64-apple-darwin
+            args: --target universal-apple-darwin --bundles app,dmg
+    runs-on: ${{ matrix.os }}
+    env:
+      TAG: v${{ needs.prepare.outputs.version }}
+      ASB_REPO: ${{ github.repository }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v${{ needs.prepare.outputs.version }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.rust_targets }}
+
+      - uses: swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+
+      - name: Install dependencies
+        shell: bash
+        run: npm install
+
+      - name: Build
+        shell: bash
+        run: npx tauri build ${{ matrix.args }}
+
+      - name: Upload ASBDataGhana.exe
+        if: runner.os == 'Windows'
+        shell: bash
+        run: |
+          SETUP=$(ls src-tauri/target/release/bundle/nsis/*-setup.exe | head -n 1)
+          cp "$SETUP" ASBDataGhana.exe
+          gh release upload "$TAG" ASBDataGhana.exe --clobber
+
+      - name: Upload ASBDataGhana.dmg
+        if: runner.os == 'macOS'
+        shell: bash
+        run: |
+          OUT=src-tauri/target/universal-apple-darwin/release/bundle
+          DMG=$(ls "$OUT"/dmg/*.dmg | head -n 1)
+          cp "$DMG" ASBDataGhana.dmg
+          APP=$(find "$OUT/macos" -maxdepth 1 -name "*.app" | head -n 1)
+          # Used by the in-app updater (not by people downloading manually).
+          tar -czf ASBDataGhana-mac.tar.gz -C "$(dirname "$APP")" "$(basename "$APP")"
+          gh release upload "$TAG" ASBDataGhana.dmg ASBDataGhana-mac.tar.gz --clobber
+
+  publish:
+    needs: [prepare, build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Publish release as latest
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          TAG="v${{ needs.prepare.outputs.version }}"
+          gh release edit "$TAG" --prerelease=false --latest
+          {
+            echo "### Released $TAG"
+            echo ""
+            echo "- Windows: https://github.com/${{ github.repository }}/releases/latest/download/ASBDataGhana.exe"
+            echo "- macOS: https://github.com/${{ github.repository }}/releases/latest/download/ASBDataGhana.dmg"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  cleanup:
+    needs: [prepare, build, publish]
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Remove the unfinished release so you can simply run it again
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: gh release delete "v${{ needs.prepare.outputs.version }}" --cleanup-tag --yes || true
