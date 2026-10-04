@@ -1,6 +1,6 @@
 {
   "name": "asbdata-ghana-desktop",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "private": true,
   "description": "ASBData Ghana admin dashboard as a native desktop app (Tauri)",
   "scripts": {
