@@ -1,6 +1,6 @@
 [package]
 name = "asbdata-ghana-desktop"
-version = "1.0.2"
+version = "1.0.3"
 description = "ASBData Ghana admin dashboard as a native desktop app"
 authors = ["ASBData Ghana"]
 edition = "2021"
