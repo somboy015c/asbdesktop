@@ -54,9 +54,11 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
-          git commit -m "chore(release): v$VERSION"
+          # (no-op if the version in the repo already matches, e.g. after a failed run)
+          git diff --cached --quiet || git commit -m "chore(release): v$VERSION"
           git tag "v$VERSION"
-          git push origin "HEAD:${{ github.ref_name }}" --follow-tags
+          git push origin "HEAD:${{ github.ref_name }}"
+          git push origin "refs/tags/v$VERSION"
           # Pre-release = hidden from "latest" until every build has finished.
           gh release create "v$VERSION" --title "ASBData Ghana v$VERSION" --notes "$NOTES" --prerelease --verify-tag
 
