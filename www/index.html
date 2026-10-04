@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ASBData Ghana</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<!-- Icon sprite (Lucide-style outlines) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol>
+  <symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></symbol>
+  <symbol id="i-package" viewBox="0 0 24 24"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></symbol>
+  <symbol id="i-wallet" viewBox="0 0 24 24"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></symbol>
+  <symbol id="i-wifi-off" viewBox="0 0 24 24"><path d="M12 20h.01"/><path d="M8.5 16.429a5 5 0 0 1 7 0"/><path d="M5 12.859a10 10 0 0 1 5.17-2.69"/><path d="M19 12.859a10 10 0 0 0-2.007-1.523"/><path d="M2 8.82a15 15 0 0 1 4.177-2.643"/><path d="M22 8.82a15 15 0 0 0-11.288-3.764"/><path d="m2 2 20 20"/></symbol>
+  <symbol id="i-trend" viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></symbol>
+</svg>
+
+<main id="stage">
+
+  <!-- 1 · Animated splash -->
+  <section id="splash" class="screen is-active" aria-label="Starting ASBData Ghana">
+    <div class="aurora" aria-hidden="true"><i></i><i></i></div>
+    <div class="splash-core">
+      <div class="mark">
+        <svg class="ring" viewBox="0 0 120 120" aria-hidden="true">
+          <circle cx="60" cy="60" r="54" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="2"/>
+          <circle cx="60" cy="60" r="54" fill="none" stroke="#29B6E8" stroke-width="3" stroke-linecap="round"
+                  stroke-dasharray="100 240" transform="rotate(-90 60 60)"/>
+          <circle cx="111.9" cy="74.9" r="3.6" fill="#FCD116"/>
+        </svg>
+        <div class="disc"><img src="assets/mark.png" alt="" /></div>
+      </div>
+      <div class="lockup">
+        <div class="word"><span class="w1">ASB</span><span class="w2">DATA</span></div>
+        <div class="ghana">Ghana</div>
+      </div>
+    </div>
+    <div class="splash-foot">
+      <div class="bar"><i id="splashBar"></i></div>
+      <p id="splashStatus" aria-live="polite">Starting up</p>
+    </div>
+  </section>
+
+  <!-- 2 · Onboarding (first launch only) -->
+  <section id="onboarding" class="screen" aria-label="Welcome">
+    <div class="ob">
+      <div class="ob-art" aria-hidden="true">
+        <div class="blob b1"></div><div class="blob b2"></div>
+
+        <div class="art" data-i="0">
+          <div class="win">
+            <div class="win-bar"><i></i><i></i><i></i></div>
+            <div class="tiles">
+              <div class="tile" style="--i:0"><span>Orders</span><b>1,284</b></div>
+              <div class="tile" style="--i:1"><span>Revenue</span><b>GH₵ 18.6k</b></div>
+              <div class="tile" style="--i:2"><span>Agents</span><b>96</b></div>
+            </div>
+            <div class="chart">
+              <i style="--h:34%;--i:0"></i><i style="--h:52%;--i:1"></i><i style="--h:44%;--i:2"></i>
+              <i style="--h:68%;--i:3"></i><i style="--h:58%;--i:4"></i><i style="--h:82%;--i:5"></i>
+              <i style="--h:74%;--i:6"></i><i style="--h:96%;--i:7"></i>
+            </div>
+          </div>
+          <div class="chip chip-a"><svg class="ic"><use href="#i-package"/></svg>New order placed</div>
+          <div class="chip chip-b"><svg class="ic"><use href="#i-trend"/></svg>Sales up today</div>
+        </div>
+
+        <div class="art" data-i="1">
+          <div class="stack">
+            <div class="row" style="--i:0">
+              <div class="avatar">KA</div>
+              <div class="who"><b>Kofi Agyeman</b><small>Agent application</small></div>
+              <span class="badge-ok"><svg class="ic"><use href="#i-check"/></svg></span>
+            </div>
+            <div class="row" style="--i:1">
+              <div class="avatar alt">AS</div>
+              <div class="who"><b>Ama Sarpong</b><small>Withdrawal request</small></div>
+              <span class="badge-ok"><svg class="ic"><use href="#i-check"/></svg></span>
+            </div>
+            <div class="row" style="--i:2">
+              <div class="avatar ico"><svg class="ic"><use href="#i-package"/></svg></div>
+              <div class="who"><b>Bundle pricing</b><small>Live on storefronts</small></div>
+              <span class="sw"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="art" data-i="2">
+          <div class="shield">
+            <div class="orbit"><span class="sat"><svg class="ic"><use href="#i-refresh"/></svg></span></div>
+            <svg class="shield-svg" viewBox="0 0 24 24" aria-hidden="true">
+              <path pathLength="1" d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>
+              <path pathLength="1" d="m9 12 2 2 4-4"/>
+            </svg>
+            <div class="chip chip-up"><svg class="ic"><use href="#i-check"/></svg>You're up to date</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ob-side">
+        <img class="ob-logo" src="assets/logo.png" alt="ASBData Ghana" />
+        <div class="copy">
+          <div class="copy-item">
+            <h2>Your whole operation, at a glance</h2>
+            <p>Orders, transactions, users and revenue come together in one clean dashboard, so you always know what is happening across ASBData Ghana.</p>
+          </div>
+          <div class="copy-item">
+            <h2>Approve, price and pay out in seconds</h2>
+            <p>Review agent applications, set bundle prices and handle withdrawals without leaving the window. Every action is a click away.</p>
+          </div>
+          <div class="copy-item">
+            <h2>Private, and always up to date</h2>
+            <p>Your admin session stays on this device, and the app updates itself whenever a new version is released. Nothing to download twice.</p>
+          </div>
+        </div>
+        <div class="ob-controls">
+          <div class="dots" role="tablist" aria-label="Slides"><i></i><i></i><i></i></div>
+          <div class="actions">
+            <button class="btn btn-text" id="obSkip" type="button">Skip</button>
+            <button class="btn btn-tonal icon-only is-hidden" id="obBack" type="button" aria-label="Back"><svg class="ic"><use href="#i-arrow-left"/></svg></button>
+            <button class="btn btn-filled" id="obNext" type="button"><span id="obNextLabel">Next</span><svg class="ic" id="obNextIcon"><use href="#i-arrow-right"/></svg></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 · Hand-off to the dashboard -->
+  <section id="handoff" class="screen" aria-label="Opening dashboard">
+    <div class="aurora" aria-hidden="true"><i></i><i></i></div>
+    <div class="splash-core small">
+      <div class="mark">
+        <svg class="ring" viewBox="0 0 120 120" aria-hidden="true">
+          <circle cx="60" cy="60" r="54" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="2"/>
+          <circle cx="60" cy="60" r="54" fill="none" stroke="#29B6E8" stroke-width="3" stroke-linecap="round"
+                  stroke-dasharray="100 240" transform="rotate(-90 60 60)"/>
+          <circle cx="111.9" cy="74.9" r="3.6" fill="#FCD116"/>
+        </svg>
+        <div class="disc"><img src="assets/mark.png" alt="" /></div>
+      </div>
+      <p class="handoff-text">Opening your dashboard</p>
+    </div>
+  </section>
+
+  <!-- 4 · Offline -->
+  <section id="offline" class="screen" aria-label="No connection">
+    <div class="offline-card">
+      <div class="pulse"><span></span><span></span><div class="pulse-ico"><svg class="ic"><use href="#i-wifi-off"/></svg></div></div>
+      <h2>Can't reach ASBData Ghana</h2>
+      <p>Check your internet connection. We'll keep trying in the background, or you can retry right now.</p>
+      <button class="btn btn-filled" id="retry" type="button"><svg class="ic"><use href="#i-refresh"/></svg><span>Try again</span></button>
+    </div>
+  </section>
+
+
+  <!-- 6 · Updating -->
+  <section id="update" class="screen" aria-label="Updating">
+    <div class="aurora" aria-hidden="true"><i></i><i></i></div>
+    <div class="splash-core small">
+      <div class="mark">
+        <svg class="ring" viewBox="0 0 120 120" aria-hidden="true">
+          <circle cx="60" cy="60" r="54" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="2"/>
+          <circle cx="60" cy="60" r="54" fill="none" stroke="#29B6E8" stroke-width="3" stroke-linecap="round" stroke-dasharray="100 240" transform="rotate(-90 60 60)"/>
+          <circle cx="111.9" cy="74.9" r="3.6" fill="#FCD116"/>
+        </svg>
+        <div class="disc"><svg class="ic upd-ic"><use href="#i-download"/></svg></div>
+      </div>
+      <div class="upd-text"><h2>Updating to <span id="updVersion"></span></h2><p>Downloading the latest version. The app will restart by itself.</p></div>
+    </div>
+  </section>
+
+
+</main>
+
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
